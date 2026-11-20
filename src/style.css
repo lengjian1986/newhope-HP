@@ -95,8 +95,6 @@ main:focus { outline: none; }
 .slide-dots button { width: 18px; height: 20px; padding: 0; background: none; position: relative; }
 .slide-dots button::after { content: ''; position: absolute; width: 6px; height: 6px; background: #c5d5eb; border-radius: 50%; top: 7px; left: 6px; }
 .slide-dots button.active::after { background: var(--blue); }
-.slide-dots button.carousel-toggle { display: none; }
-.slide-dots button.carousel-toggle::after { content: none; }
 .quick-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding-block: 48px; }
 .quick-link { background: #f2f7fd; border-radius: 5px; padding: 28px; display: flex; gap: 17px; min-width: 0; transition: background .2s; }
 .quick-link:hover { background: #e9f2fc; }

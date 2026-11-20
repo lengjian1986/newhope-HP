@@ -36,9 +36,9 @@ test('mobile menu, teacher anchor and photo carousel work', async ({ page }) => 
   await expect(page.locator('#teachers')).toBeInViewport()
   await expect(page.locator('#mobile-navigation')).toHaveCount(0)
   await page.goto('/')
-  const before = await page.locator('.hero-photo img').getAttribute('src')
+  const before = await page.locator('.hero-photo picture.is-active img').getAttribute('src')
   await page.getByRole('button', { name: '次の写真を見る' }).click()
-  await expect(page.locator('.hero-photo img')).not.toHaveAttribute('src', before)
+  await expect(page.locator('.hero-photo picture.is-active img')).not.toHaveAttribute('src', before)
   await expect(page.locator('.slide-dots button').nth(1)).toHaveAttribute('aria-pressed', 'true')
 })
 
