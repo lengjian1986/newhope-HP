@@ -56,7 +56,7 @@ test('news categories, pagination and detail navigation work', async ({ page }) 
   await expect(page.locator('.article-title')).toHaveText('新年度の入学相談を受け付けています')
 })
 
-test('contact form validates, confirms, preserves edits and never pretends to send', async ({ page }) => {
+test('contact form validates and submits on the website without opening email', async ({ page }) => {
   await page.goto('/contact/')
   await page.getByRole('button', { name: '入力内容を確認する' }).click()
   await expect(page.locator('.contact-summary')).toHaveCount(0)
@@ -67,14 +67,13 @@ test('contact form validates, confirms, preserves edits and never pretends to se
   await page.locator('.consent input').check()
   await page.getByRole('button', { name: '入力内容を確認する' }).click()
   await expect(page.locator('.contact-summary')).toContainText('テスト 花子')
-  await expect(page.locator('.contact-summary')).toContainText('直接送信は行いません')
+  await expect(page.locator('.contact-summary')).toContainText('送信する')
   await page.getByRole('button', { name: '入力を修正する' }).click()
   await expect(page.getByLabel('お名前')).toHaveValue('テスト 花子')
   await page.getByRole('button', { name: '入力内容を確認する' }).click()
-  const download = page.waitForEvent('download')
-  await page.getByRole('button', { name: '内容を保存する' }).click()
-  expect((await download).suggestedFilename()).toBe('new-hope-inquiry.txt')
-  await expect(page.getByRole('status')).toContainText('学校への送信は行っていません')
+  await page.route('https://formsubmit.co/ajax/**', route => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: 'true' }) }))
+  await page.getByRole('button', { name: '送信する', exact: true }).click()
+  await expect(page.getByRole('status')).toContainText('お問い合わせを受け付けました')
 })
 
 test('tablet and compact phone remain usable and captures match the layout', async ({ page }) => {

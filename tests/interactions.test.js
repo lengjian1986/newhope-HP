@@ -18,7 +18,7 @@ async function setup(component, url = '/') {
   wrappers.push(wrapper)
   return { wrapper, router }
 }
-afterEach(() => { for (const wrapper of wrappers.splice(0)) wrapper.unmount(); vi.useRealTimers(); vi.restoreAllMocks() })
+afterEach(() => { for (const wrapper of wrappers.splice(0)) wrapper.unmount(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 describe('navigation and homepage', () => {
   test('manual selection and returning to the tab each restart a full five-second interval', async () => {
@@ -134,7 +134,7 @@ describe('inquiry form', () => {
   test('fields have validation rules and confirmation preserves user edits', async () => {
     const { wrapper } = await setup(Contact, '/contact/')
     expect(wrapper.get('.contact-methods a').attributes('href')).toBe('tel:0675026106')
-    expect(wrapper.get('.contact-methods a:last-child').attributes('href')).toBe('mailto:newhope.toukatsu@gmail.com')
+    expect(wrapper.findAll('a[href^="mailto:"]')).toHaveLength(0)
     expect(wrapper.get('#inquiry-name').attributes()).toHaveProperty('required')
     expect(wrapper.get('#inquiry-email').attributes('type')).toBe('email')
     expect(wrapper.get('#inquiry-message').attributes()).toHaveProperty('required')
@@ -147,14 +147,71 @@ describe('inquiry form', () => {
     await wrapper.get('form').trigger('submit')
     await flushPromises()
     expect(wrapper.get('.contact-summary').text()).toContain('テスト 花子')
-    expect(wrapper.get('.contact-summary').text()).toContain('直接送信は行いません')
-    const emailLink = new URL(wrapper.get('.contact-summary a.button-primary').attributes('href'))
-    expect(emailLink.pathname).toBe('newhope.toukatsu@gmail.com')
-    expect(emailLink.searchParams.get('body')).toContain('学校見学について相談したいです。')
+    expect(wrapper.get('.contact-summary').text()).toContain('送信する')
+    expect(wrapper.text()).not.toContain('内容を保存する')
     const edit = wrapper.findAll('button').find(button => button.text().includes('入力を修正する'))
     await edit.trigger('click')
     expect(wrapper.get('#inquiry-name').element.value).toBe('テスト 花子')
     expect(wrapper.get('#inquiry-message').element.value).toBe('学校見学について相談したいです。')
     expect(wrapper.find('[type="submit"]').text()).toContain('確認する')
+  })
+})
+
+async function confirmedContact() {
+  const { wrapper } = await setup(Contact, '/contact/')
+  await wrapper.get('#inquiry-name').setValue('テスト 花子')
+  await wrapper.get('#inquiry-email').setValue('test@example.com')
+  await wrapper.get('#inquiry-message').setValue('入学について相談したいです。')
+  await wrapper.get('.consent input').setValue(true)
+  await wrapper.get('form').trigger('submit')
+  await flushPromises()
+  return wrapper
+}
+
+describe('direct website submission (mocked service, no real emails)', () => {
+  test('posts once, disables duplicate submissions and shows acceptance only after success', async () => {
+    let resolveRequest
+    const request = vi.fn(() => new Promise(resolve => { resolveRequest = resolve }))
+    vi.stubGlobal('fetch', request)
+    const wrapper = await confirmedContact()
+    const send = wrapper.get('.confirmation-actions .button-primary')
+    await send.trigger('click')
+    expect(send.attributes()).toHaveProperty('disabled')
+    await send.trigger('click')
+    expect(request).toHaveBeenCalledTimes(1)
+    const [url, options] = request.mock.calls[0]
+    expect(url).toBe('https://formsubmit.co/ajax/newhope.toukatsu@gmail.com')
+    expect(options.method).toBe('POST')
+    expect(JSON.parse(options.body)).toMatchObject({ name: 'テスト 花子', email: 'test@example.com', _replyto: 'test@example.com', message: '入学について相談したいです。' })
+    expect(wrapper.find('.submission-result').exists()).toBe(false)
+    resolveRequest({ ok: true, json: async () => ({ success: 'true' }) })
+    await flushPromises()
+    expect(wrapper.get('.submission-result').text()).toContain('お問い合わせを受け付けました')
+  })
+
+  test('network and service failures preserve input and allow retry', async () => {
+    const request = vi.fn().mockRejectedValueOnce(new TypeError('offline')).mockResolvedValueOnce({ ok: true, json: async () => ({ success: false }) }).mockResolvedValueOnce({ ok: true, json: async () => ({ success: true }) })
+    vi.stubGlobal('fetch', request)
+    const wrapper = await confirmedContact()
+    await wrapper.get('.confirmation-actions .button-primary').trigger('click')
+    await flushPromises()
+    expect(wrapper.get('[role=alert]').text()).toContain('入力内容は保持されています')
+    expect(wrapper.get('.contact-summary').text()).toContain('テスト 花子')
+    expect(wrapper.get('.confirmation-actions .button-primary').attributes('disabled')).toBeUndefined()
+    await wrapper.get('.confirmation-actions .button-primary').trigger('click')
+    await flushPromises()
+    expect(wrapper.find('.submission-result').exists()).toBe(false)
+    await wrapper.get('.confirmation-actions .button-primary').trigger('click')
+    await flushPromises()
+    expect(wrapper.get('.submission-result').text()).toContain('受け付けました')
+  })
+
+  test('activation required is not shown as a successfully delivered inquiry', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ success: false, message: 'This form needs activation' }) }))
+    const wrapper = await confirmedContact()
+    await wrapper.get('.confirmation-actions .button-primary').trigger('click')
+    await flushPromises()
+    expect(wrapper.get('.submission-result').text()).toContain('受信設定の確認が必要')
+    expect(wrapper.get('.submission-result').text()).not.toContain('受け付けました')
   })
 })

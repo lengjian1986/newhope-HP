@@ -1,35 +1,69 @@
 <script setup>
-import { ref, reactive, nextTick, computed } from 'vue'
+import { ref, reactive, nextTick } from 'vue'
 import { ArrowRight, ArrowLeft, Check } from 'lucide-vue-next'
 import PageHeading from '../components/PageHeading.vue'
 import { school } from '../data.js'
 const stage = ref('edit')
 const summary = ref(null)
 const form = reactive({ type: '入学について', name: '', email: '', country: '', message: '', consent: false })
-const notice = ref('')
-const emailDraft = computed(() => {
-  const body = `お問い合わせ種別：${form.type}\nお名前：${form.name}\nメールアドレス：${form.email}\n国・地域：${form.country || '未入力'}\n\n${form.message}`
-  return `mailto:${school.email}?subject=${encodeURIComponent(`【${form.type}】${form.name}`)}&body=${encodeURIComponent(body)}`
-})
+const submitting = ref(false)
+const error = ref('')
+const honey = ref('')
 async function confirm() {
+  error.value = ''
   stage.value = 'confirm'
   await nextTick()
   summary.value?.focus()
 }
-function download() {
-  const content = `お問い合わせ内容\n\n種別：${form.type}\nお名前：${form.name}\nメールアドレス：${form.email}\n国・地域：${form.country || '未入力'}\n\n${form.message}\n`
-  const url = URL.createObjectURL(new Blob([content], { type: 'text/plain;charset=utf-8' }))
-  const link = document.createElement('a')
-  link.href = url
-  link.download = 'new-hope-inquiry.txt'
-  link.click()
-  setTimeout(() => URL.revokeObjectURL(url), 1000)
-  notice.value = 'お問い合わせ内容を保存しました。学校への送信は行っていません。'
+async function send() {
+  if (submitting.value || stage.value !== 'confirm') return
+  if (!form.consent || !form.name || !form.email || !form.message || honey.value) {
+    error.value = '入力内容をご確認ください。'
+    return
+  }
+  submitting.value = true
+  error.value = ''
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 20000)
+  try {
+    const response = await fetch(`https://formsubmit.co/ajax/${school.email}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      credentials: 'omit',
+      signal: controller.signal,
+      body: JSON.stringify({
+        name: form.name, email: form.email, country: form.country || '未入力',
+        message: form.message, 'お問い合わせ種別': form.type,
+        _subject: `【${school.name}】${form.type}`,
+        _replyto: form.email, _template: 'table', _captcha: 'false',
+        _honey: honey.value, _url: window.location.href,
+      }),
+    })
+    const result = await response.json()
+    if (!response.ok) throw new Error('submission_failed')
+    if (/activat|confirm your email/i.test(result.message || '')) {
+      stage.value = 'activation'
+    } else if (result.success === true || result.success === 'true') {
+      stage.value = 'success'
+    } else {
+      throw new Error('submission_failed')
+    }
+    await nextTick()
+    summary.value?.focus()
+  } catch (cause) {
+    error.value = cause.name === 'AbortError'
+      ? '通信がタイムアウトしました。受付状況を確認できませんでした。時間をおいて学校へご確認ください。'
+      : '送信を確認できませんでした。入力内容は保持されています。通信状況をご確認のうえ、再度お試しいただくか、お電話でお問い合わせください。'
+  } finally {
+    clearTimeout(timeout)
+    submitting.value = false
+  }
 }
 </script>
 <template>
-  <PageHeading title="お問い合わせ" eyebrow="CONTACT US" description="入学相談・資料請求など、お気軽にお問い合わせください。" /><section class="section"><div class="container contact-content"><h2>あなたの「知りたい」を<br class="mobile-only" />お聞かせください。</h2><p>内容を確認のうえ、担当者よりご連絡いたします。<br />＊は必須項目です。</p><div class="contact-methods"><a :href="school.phoneHref"><span>お電話でのお問い合わせ</span><strong>{{ school.phone }}</strong></a><a :href="`mailto:${school.email}`"><span>メールでのお問い合わせ</span><strong>{{ school.email }}</strong></a></div><p class="form-notice">下記フォームで内容をご確認のうえ、メールアプリを開いて学校へ送信できます。</p>
+  <PageHeading title="お問い合わせ" eyebrow="CONTACT US" description="入学相談・資料請求など、お気軽にお問い合わせください。" /><section class="section"><div class="container contact-content"><h2>あなたの「知りたい」を<br class="mobile-only" />お聞かせください。</h2><p>内容を確認のうえ、担当者よりご連絡いたします。<br />＊は必須項目です。</p><div class="contact-methods"><a :href="school.phoneHref"><span>お電話でのお問い合わせ</span><strong>{{ school.phone }}</strong></a><div><span>メールアドレス</span><strong>{{ school.email }}</strong></div></div><p class="form-notice">下記フォームで内容をご確認のうえ、このページからお問い合わせを送信できます。</p>
     <form v-if="stage === 'edit'" class="contact-form" @submit.prevent="confirm">
+      <div class="form-honeypot" aria-hidden="true"><label for="inquiry-website">Website</label><input id="inquiry-website" v-model="honey" name="website" autocomplete="off" tabindex="-1" /></div>
       <div class="field"><label for="inquiry-type">お問い合わせ種別 <span>＊</span></label><select id="inquiry-type" v-model="form.type" required><option>入学について</option><option>学習コースについて</option><option>学校見学について</option><option>資料請求</option><option>その他</option></select></div>
       <div class="field"><label for="inquiry-name">お名前 <span>＊</span></label><input id="inquiry-name" v-model.trim="form.name" name="name" autocomplete="name" placeholder="例：山田 花子" required maxlength="100" /></div>
       <div class="field"><label for="inquiry-email">メールアドレス <span>＊</span></label><input id="inquiry-email" v-model.trim="form.email" name="email" type="email" autocomplete="email" placeholder="example@email.com" required maxlength="254" /></div>
@@ -38,6 +72,18 @@ function download() {
       <label class="consent"><input v-model="form.consent" type="checkbox" required /><span><RouterLink to="/privacy/" target="_blank">個人情報の取り扱い</RouterLink>に同意する</span></label>
       <button class="button button-primary" type="submit">入力内容を確認する <ArrowRight :size="18" /></button>
     </form>
-    <div v-else ref="summary" class="contact-summary" tabindex="-1"><h3><Check :size="22" />入力内容の確認</h3><dl><div v-for="(label, key) in { type: 'お問い合わせ種別', name: 'お名前', email: 'メールアドレス', country: '国・地域', message: 'お問い合わせ内容' }" :key="key"><dt>{{ label }}</dt><dd>{{ form[key] || '未入力' }}</dd></div></dl><p class="form-notice">メールアプリで内容を確認して送信してください。フォームからの直接送信は行いません。</p><div class="confirmation-actions"><button class="button button-outline" @click="stage = 'edit'; notice = ''"><ArrowLeft :size="16" />入力を修正する</button><a class="button button-primary" :href="emailDraft">メールアプリで送信する <ArrowRight :size="16" /></a><button class="button button-outline" @click="download">内容を保存する <ArrowRight :size="16" /></button></div><p role="status">{{ notice }}</p></div>
+    <div v-else-if="stage === 'confirm'" ref="summary" class="contact-summary" tabindex="-1" :aria-busy="submitting">
+      <h3><Check :size="22" />入力内容の確認</h3>
+      <dl><div v-for="(label, key) in { type: 'お問い合わせ種別', name: 'お名前', email: 'メールアドレス', country: '国・地域', message: 'お問い合わせ内容' }" :key="key"><dt>{{ label }}</dt><dd>{{ form[key] || '未入力' }}</dd></div></dl>
+      <p>内容をご確認のうえ、「送信する」を押してください。</p>
+      <p v-if="error" class="form-error" role="alert">{{ error }}</p>
+      <div class="confirmation-actions"><button class="button button-outline" :disabled="submitting" @click="stage = 'edit'; error = ''"><ArrowLeft :size="16" />入力を修正する</button><button class="button button-primary" :disabled="submitting" @click="send">{{ submitting ? '送信中…' : '送信する' }} <ArrowRight :size="16" /></button></div>
+    </div>
+    <div v-else ref="summary" class="contact-summary submission-result" tabindex="-1" role="status">
+      <Check :size="36" aria-hidden="true" />
+      <template v-if="stage === 'success'"><h3>お問い合わせを受け付けました。</h3><p>内容を確認のうえ、担当者よりご連絡いたします。<br />お返事までしばらくお待ちください。</p></template>
+      <template v-else><h3>お問い合わせの受付を確認中です。</h3><p>学校側で受信設定の確認が必要です。お急ぎの場合は、お電話でお問い合わせください。</p></template>
+      <RouterLink to="/" class="button button-outline">ホームに戻る <ArrowRight :size="16" /></RouterLink>
+    </div>
   </div></section>
 </template>

@@ -243,7 +243,10 @@ main:focus { outline: none; }
 .school-english-name { margin: -10px 0 24px; color: var(--soft-text); font-family: var(--sans); }
 .access-address a, .school-overview a { overflow-wrap: anywhere; }
 .contact-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-block: 28px; }
-.contact-methods a { display: grid; gap: 14px; padding: 24px; background: var(--pale); border: 1px solid var(--line); }
+.contact-methods > * { display: grid; gap: 14px; padding: 24px; background: var(--pale); border: 1px solid var(--line); }
+.form-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.form-error { color: #a32b31; background: #fff4f4; padding: 18px; margin-top: 24px; }
+.submission-result { display: grid; justify-items: start; gap: 24px; padding-block: 24px; }
 .contact-methods span { font-size: 14px; }
 .contact-methods strong { font: 500 21px/1.6 var(--sans); color: var(--blue); overflow-wrap: anywhere; }
 @media (max-width: 767px) {
