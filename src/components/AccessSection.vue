@@ -10,7 +10,7 @@ const steps = [
 <template>
   <section id="access" class="section pale-section">
     <div class="container"><p class="eyebrow">ACCESS</p><h2>学校までの道のり</h2><p class="section-intro">はじめての方にも、安心してお越しいただけるように。最寄り駅から学校までの道順をご案内します。</p>
-      <div class="access-information"><div><h3>{{ school.name }}</h3><p class="school-english-name">{{ school.englishName }}</p><dl class="access-address"><div><dt>所在地</dt><dd>{{ school.address }}</dd></div><div v-for="station in school.stations" :key="station.station"><dt>{{ station.walk }}</dt><dd>{{ station.line }}「{{ station.station }}」</dd></div><div><dt>TEL</dt><dd><a :href="school.phoneHref">{{ school.phone }}</a></dd></div><div><dt>Email</dt><dd><a :href="`mailto:${school.email}`">{{ school.email }}</a></dd></div></dl><a :href="school.mapUrl" target="_blank" rel="noopener noreferrer" class="text-link access-map-link">Google マップで確認する ↗</a></div>
+      <div class="access-information"><div><h3>{{ school.name }}</h3><p class="school-english-name">{{ school.englishName }}</p><dl class="access-address"><div><dt>所在地</dt><dd>{{ school.address }}</dd></div><div v-for="station in school.stations" :key="station.station"><dt>{{ station.walk }}</dt><dd>{{ station.line }}「{{ station.station }}」</dd></div><div><dt>TEL</dt><dd><a :href="school.phoneHref">{{ school.phone }}</a></dd></div><div><dt>Email</dt><dd><a :href="`mailto:${school.email}`">{{ school.email }}</a></dd></div></dl></div>
         <div class="access-map"><iframe :src="mapEmbedUrl" :title="`${school.name}の所在地：${school.address}`" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
       </div>
       <h3 class="route-heading">駅から学校まで｜写真で見るアクセス</h3>

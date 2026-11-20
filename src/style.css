@@ -243,7 +243,6 @@ main:focus { outline: none; }
 .footer-address { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 22px; font: normal 13px/1.8 var(--sans); color: #d9e6fa; }
 .footer-address a:hover { text-decoration: underline; }
 .school-english-name { margin: -10px 0 24px; color: var(--soft-text); font-family: var(--sans); }
-.access-map-link { margin-top: 24px; }
 .access-address a, .school-overview a { overflow-wrap: anywhere; }
 .contact-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-block: 28px; }
 .contact-methods a { display: grid; gap: 14px; padding: 24px; background: var(--pale); border: 1px solid var(--line); }
