@@ -1,10 +1,11 @@
 <script setup>
 import { ref, reactive, nextTick } from 'vue'
-import { ArrowRight, ArrowLeft, Check } from 'lucide-vue-next'
+import { ArrowRight, ArrowLeft, Check, CircleCheck, CircleX } from 'lucide-vue-next'
 import PageHeading from '../components/PageHeading.vue'
 import { school } from '../data.js'
 const stage = ref('edit')
 const summary = ref(null)
+const failureNotice = ref(null)
 const form = reactive({ type: '入学について', name: '', email: '', country: '', message: '', consent: false })
 const submitting = ref(false)
 const error = ref('')
@@ -54,6 +55,8 @@ async function send() {
     error.value = cause.name === 'AbortError'
       ? '通信がタイムアウトしました。受付状況を確認できませんでした。時間をおいて学校へご確認ください。'
       : '送信を確認できませんでした。入力内容は保持されています。通信状況をご確認のうえ、再度お試しいただくか、お電話でお問い合わせください。'
+    await nextTick()
+    failureNotice.value?.focus()
   } finally {
     clearTimeout(timeout)
     submitting.value = false
@@ -76,13 +79,12 @@ async function send() {
       <h3><Check :size="22" />入力内容の確認</h3>
       <dl><div v-for="(label, key) in { type: 'お問い合わせ種別', name: 'お名前', email: 'メールアドレス', country: '国・地域', message: 'お問い合わせ内容' }" :key="key"><dt>{{ label }}</dt><dd>{{ form[key] || '未入力' }}</dd></div></dl>
       <p>内容をご確認のうえ、「送信する」を押してください。</p>
-      <p v-if="error" class="form-error" role="alert">{{ error }}</p>
+      <div v-if="error" ref="failureNotice" class="form-error" role="alert" tabindex="-1"><h3 class="submission-status-title"><CircleX :size="28" aria-hidden="true" />送信失敗！</h3><p>{{ error }}</p></div>
       <div class="confirmation-actions"><button class="button button-outline" :disabled="submitting" @click="stage = 'edit'; error = ''"><ArrowLeft :size="16" />入力を修正する</button><button class="button button-primary" :disabled="submitting" @click="send">{{ submitting ? '送信中…' : '送信する' }} <ArrowRight :size="16" /></button></div>
     </div>
     <div v-else ref="summary" class="contact-summary submission-result" tabindex="-1" role="status">
-      <Check :size="36" aria-hidden="true" />
-      <template v-if="stage === 'success'"><h3>お問い合わせを受け付けました。</h3><p>内容を確認のうえ、担当者よりご連絡いたします。<br />お返事までしばらくお待ちください。</p></template>
-      <template v-else><h3>お問い合わせの受付を確認中です。</h3><p>学校側で受信設定の確認が必要です。お急ぎの場合は、お電話でお問い合わせください。</p></template>
+      <template v-if="stage === 'success'"><h2 class="submission-status-title submission-success"><CircleCheck :size="36" aria-hidden="true" />送信成功！</h2><p>お問い合わせを受け付けました。<br />内容を確認のうえ、担当者よりご連絡いたします。<br />お返事までしばらくお待ちください。</p></template>
+      <template v-else><h2 class="submission-status-title submission-failure"><CircleX :size="36" aria-hidden="true" />送信失敗！</h2><p>学校側で受信設定の確認が必要です。送信完了を確認できませんでした。お急ぎの場合は、お電話でお問い合わせください。</p></template>
       <RouterLink to="/" class="button button-outline">ホームに戻る <ArrowRight :size="16" /></RouterLink>
     </div>
   </div></section>
