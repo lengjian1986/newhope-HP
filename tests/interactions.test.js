@@ -18,9 +18,35 @@ async function setup(component, url = '/') {
   wrappers.push(wrapper)
   return { wrapper, router }
 }
-afterEach(() => { for (const wrapper of wrappers.splice(0)) wrapper.unmount(); vi.restoreAllMocks() })
+afterEach(() => { for (const wrapper of wrappers.splice(0)) wrapper.unmount(); vi.useRealTimers(); vi.restoreAllMocks() })
 
 describe('navigation and homepage', () => {
+  test('carousel advances every five seconds, loops, pauses and cleans up on exit', async () => {
+    vi.useFakeTimers()
+    const { wrapper } = await setup(Home)
+    const first = wrapper.get('.hero-photo img').attributes('src')
+    await vi.advanceTimersByTimeAsync(4999)
+    expect(wrapper.get('.hero-photo img').attributes('src')).toBe(first)
+    await vi.advanceTimersByTimeAsync(1)
+    expect(wrapper.findAll('.slide-dots button')[1].attributes('aria-pressed')).toBe('true')
+    await vi.advanceTimersByTimeAsync(5000)
+    expect(wrapper.findAll('.slide-dots button')[2].attributes('aria-pressed')).toBe('true')
+    await vi.advanceTimersByTimeAsync(5000)
+    expect(wrapper.get('.hero-photo img').attributes('src')).toBe(first)
+    await wrapper.get('.carousel-toggle').trigger('click')
+    await vi.advanceTimersByTimeAsync(5000)
+    expect(wrapper.get('.hero-photo img').attributes('src')).toBe(first)
+    await wrapper.get('.carousel-toggle').trigger('click')
+    await wrapper.get('#hero').trigger('mouseenter')
+    await vi.advanceTimersByTimeAsync(5000)
+    expect(wrapper.get('.hero-photo img').attributes('src')).toBe(first)
+    await wrapper.get('#hero').trigger('mouseleave')
+    await vi.advanceTimersByTimeAsync(5000)
+    expect(wrapper.get('.hero-photo img').attributes('src')).not.toBe(first)
+    wrapper.unmount()
+    expect(vi.getTimerCount()).toBe(0)
+    wrappers.splice(wrappers.indexOf(wrapper), 1)
+  })
   test('mobile menu opens, closes with Escape, and closes on navigation', async () => {
     const { wrapper, router } = await setup(SiteHeader)
     const toggle = wrapper.get('.menu-toggle')

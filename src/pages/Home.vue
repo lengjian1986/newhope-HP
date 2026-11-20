@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue'
-import { ArrowRight, BookOpen, GraduationCap, Users, ChevronRight } from 'lucide-vue-next'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { ArrowRight, BookOpen, GraduationCap, Users, ChevronRight, Pause, Play } from 'lucide-vue-next'
 import { assets, news, teachers } from '../data.js'
 
 const activeSlide = ref(0)
@@ -9,6 +9,27 @@ const slides = [
   { src: assets.classroom, alt: '仲間と学び合う教室' },
   { src: assets.art, alt: 'アートと日本語の体験' },
 ]
+const paused = ref(false)
+const hovered = ref(false)
+const focused = ref(false)
+let slideTimer
+function startTimer() {
+  clearInterval(slideTimer)
+  slideTimer = setInterval(() => {
+    if (!paused.value && !hovered.value && !focused.value && !document.hidden) {
+      activeSlide.value = (activeSlide.value + 1) % slides.length
+    }
+  }, 5000)
+}
+function selectSlide(index) {
+  activeSlide.value = index
+  startTimer()
+}
+onMounted(() => {
+  paused.value = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+  startTimer()
+})
+onUnmounted(() => clearInterval(slideTimer))
 const quickLinks = [
   { to: '/about/', title: '学校案内', icon: GraduationCap, description: '新しい出会いと学びがある場所。\n学校の特徴や施設をご紹介します。', short: '学校の特徴・施設について' },
   { to: '/courses/', title: '学習コース', icon: BookOpen, description: '目標に合わせて選べるコース。\n進学から日常会話までサポート。', short: '目標に合わせた日本語の学び' },
@@ -17,15 +38,15 @@ const quickLinks = [
 </script>
 
 <template>
-  <section id="hero" class="home-hero" aria-roledescription="カルーセル" aria-label="学校の紹介">
+  <section id="hero" class="home-hero" aria-roledescription="カルーセル" aria-label="学校の紹介" @mouseenter="hovered = true" @mouseleave="hovered = false" @focusin="focused = true" @focusout="focused = $event.currentTarget.contains($event.relatedTarget)">
     <div class="hero-inner">
       <div class="hero-copy"><h1>大阪で、<br />日本語の新しい一歩を。</h1><p>日本語を学び、未来へつなぐ。<br />一人ひとりの夢に寄り添う、日本語学校です。</p></div>
       <div class="hero-photo">
         <picture :key="activeSlide"><source v-if="slides[activeSlide].mobile" media="(max-width: 767px)" :srcset="slides[activeSlide].mobile" /><img :src="slides[activeSlide].src" :alt="slides[activeSlide].alt" fetchpriority="high" width="1700" height="1200" /></picture>
-        <button class="hero-next" aria-label="次の写真を見る" @click="activeSlide = (activeSlide + 1) % slides.length"><ChevronRight :size="21" /></button>
+        <button class="hero-next" aria-label="次の写真を見る" @click="selectSlide((activeSlide + 1) % slides.length)"><ChevronRight :size="21" /></button>
       </div>
       <div class="hero-actions"><RouterLink to="/about/" class="button button-primary">学校について <ArrowRight :size="16" /></RouterLink><RouterLink to="/courses/" class="button button-outline"><span class="desktop-label">学習コースを見る</span><span class="mobile-label">コースを見る</span><ArrowRight :size="16" /></RouterLink></div>
-      <div class="slide-dots" aria-label="写真を選ぶ"><button v-for="(slide, i) in slides" :key="slide.src" :class="{ active: activeSlide === i }" :aria-label="`写真 ${i + 1}：${slide.alt}`" :aria-pressed="activeSlide === i" @click="activeSlide = i"></button></div>
+      <div class="slide-dots" aria-label="写真を選ぶ"><button v-for="(slide, i) in slides" :key="slide.src" :class="{ active: activeSlide === i }" :aria-label="`写真 ${i + 1}：${slide.alt}`" :aria-pressed="activeSlide === i" @click="selectSlide(i)"></button><button class="carousel-toggle" :aria-label="paused ? '自動再生を開始' : '自動再生を一時停止'" :aria-pressed="paused" @click="paused = !paused"><Play v-if="paused" :size="12" /><Pause v-else :size="12" /></button></div>
     </div>
   </section>
 
