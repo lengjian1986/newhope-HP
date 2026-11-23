@@ -98,16 +98,18 @@ h1, h2, h3 { letter-spacing: -.035em; font-weight: 600; }
   .brand-jp { font-size: 17px; }
   .brand-en { font-size: 8px; }
   .home-hero { padding: 12px; }
-  .hero-inner { height: auto; padding: 28px 20px 20px; gap: 22px; border-radius: 18px; }
-  .hero-copy { padding: 0; max-width: none; }
+  .hero-inner { height: auto; padding: 0; gap: 0; grid-template-columns: minmax(0, 1fr); border-radius: 18px; }
+  .hero-copy { grid-row: 1; padding: 28px 20px 0; max-width: none; }
   .hero-copy h1 { margin-top: 19px; font-size: 28px; }
   .hero-copy p { font-size: 14px; margin-top: 16px; }
   .hero-kicker.el-tag { font-size: 8px; height: 26px; }
-  .hero-photo { height: auto; border-radius: 12px; }
-  .hero-actions { gap: 10px; }
+  .hero-photo { grid-column: 1; grid-row: 3; width: 100%; height: auto; aspect-ratio: 4 / 3; border-radius: 0; }
+  .hero-photo::before { display: none; }
+  .hero-next { top: 50%; right: 12px; transform: translateY(-50%); width: 36px; height: 36px; z-index: 2; }
+  .hero-actions { grid-column: 1; grid-row: 2; gap: 10px; padding: 22px 20px 26px; }
   .hero-actions .button { font-size: 12px; padding-inline: 8px; }
   .hero-caption { display: none; }
-  .slide-dots { position: static; background: none; padding: 0; }
+  .slide-dots { position: relative; grid-column: 1; grid-row: 3; align-self: end; justify-self: center; left: auto; bottom: auto; margin: 0 0 14px; background: #ffffffde; padding: 3px 10px; border-radius: 30px; }
   .quick-links { padding-block: 20px 36px; gap: 12px; }
   .quick-link { padding: 18px; }
   .quick-copy h2 { font-size: 19px; }
