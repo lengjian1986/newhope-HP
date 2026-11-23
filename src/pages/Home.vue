@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { ElTag } from 'element-plus'
 import { ArrowRight, BookOpen, GraduationCap, Users, ChevronRight } from 'lucide-vue-next'
 import { assets, news, teachers } from '../data.js'
 
@@ -40,12 +41,13 @@ const quickLinks = [
 <template>
   <section id="hero" class="home-hero" aria-roledescription="カルーセル" aria-label="学校の紹介">
     <div class="hero-inner">
-      <div class="hero-copy"><h1>大阪で、<br />日本語の新しい一歩を。</h1><p>日本語を学び、未来へつなぐ。<br />一人ひとりの夢に寄り添う、日本語学校です。</p></div>
+      <div class="hero-copy"><ElTag class="hero-kicker" round effect="plain">NEW HOPE LANGUAGE SCHOOL · OSAKA</ElTag><h1>大阪で、<br />日本語の新しい一歩を。</h1><p>日本語を学び、未来へつなぐ。<br />一人ひとりの夢に寄り添う、日本語学校です。</p></div>
       <div class="hero-photo">
         <picture v-for="(slide, i) in slides" v-show="activeSlide === i" :key="slide.src" :class="{ 'is-active': activeSlide === i }"><source v-if="slide.mobile" media="(max-width: 767px)" :srcset="slide.mobile" /><img :src="slide.src" :alt="slide.alt" :fetchpriority="i === 0 ? 'high' : 'auto'" loading="eager" width="1700" height="1200" /></picture>
         <button class="hero-next" aria-label="次の写真を見る" @click="selectSlide((activeSlide + 1) % slides.length)"><ChevronRight :size="21" /></button>
       </div>
       <div class="hero-actions"><RouterLink to="/about/" class="button button-primary">学校について <ArrowRight :size="16" /></RouterLink><RouterLink to="/courses/" class="button button-outline"><span class="desktop-label">学習コースを見る</span><span class="mobile-label">コースを見る</span><ArrowRight :size="16" /></RouterLink></div>
+      <div class="hero-caption"><span>LEARN JAPANESE. OPEN YOUR WORLD.</span><span>大阪・日本</span></div>
       <div class="slide-dots" aria-label="写真を選ぶ"><button v-for="(slide, i) in slides" :key="slide.src" :class="{ active: activeSlide === i }" :aria-label="`写真 ${i + 1}：${slide.alt}`" :aria-pressed="activeSlide === i" @click="selectSlide(i)"></button></div>
     </div>
   </section>
