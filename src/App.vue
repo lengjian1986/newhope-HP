@@ -7,7 +7,7 @@ import SiteFooter from './components/SiteFooter.vue'
 
 const route = useRoute()
 watch(() => route.meta.title, (title) => {
-  if (typeof document !== 'undefined') document.title = `${title}｜ニューホープ言語学校`
+  if (typeof document !== 'undefined') document.title = `${title}｜ニューホープ日本語学校`
 }, { immediate: true })
 </script>
 

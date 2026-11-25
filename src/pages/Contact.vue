@@ -65,7 +65,7 @@ async function send() {
 }
 </script>
 <template>
-  <PageHeading title="お問い合わせ" eyebrow="CONTACT US" description="入学相談・資料請求など、お気軽にお問い合わせください。" /><section class="section"><div class="container contact-content"><h2>あなたの「知りたい」を<br class="mobile-only" />お聞かせください。</h2><p>内容を確認のうえ、担当者よりご連絡いたします。<br />＊は必須項目です。</p><div class="contact-methods"><a :href="school.phoneHref"><span>お電話でのお問い合わせ</span><strong>{{ school.phone }}</strong></a><div><span>メールアドレス</span><strong>{{ school.email }}</strong></div></div><p class="form-notice">下記フォームで内容をご確認のうえ、このページからお問い合わせを送信できます。</p>
+  <PageHeading title="お問い合わせ" eyebrow="CONTACT US" description="入学相談・資料請求など、お気軽にお問い合わせください。" /><section class="section"><div class="container contact-content"><h2>あなたの「知りたい」を<br class="mobile-only" />お聞かせください。</h2><p>内容を確認のうえ、担当者よりご連絡いたします。<br />＊は必須項目です。</p><div class="contact-methods"><a :href="school.phoneHref"><span>お電話でのお問い合わせ</span><strong>{{ school.phone }}</strong></a><div><span>メールアドレス</span><strong>{{ school.email }}</strong></div></div><p>受付時間：{{ school.receptionHours }}<br />定休日：{{ school.closedDays }}</p><p class="form-notice">下記フォームで内容をご確認のうえ、このページからお問い合わせを送信できます。</p>
     <form v-if="stage === 'edit'" class="contact-form" @submit.prevent="confirm">
       <div class="form-honeypot" aria-hidden="true"><label for="inquiry-website">Website</label><input id="inquiry-website" v-model="honey" name="website" autocomplete="off" tabindex="-1" /></div>
       <div class="field"><label for="inquiry-type">お問い合わせ種別 <span>＊</span></label><select id="inquiry-type" v-model="form.type" required><option>入学について</option><option>学習コースについて</option><option>学校見学について</option><option>資料請求</option><option>その他</option></select></div>

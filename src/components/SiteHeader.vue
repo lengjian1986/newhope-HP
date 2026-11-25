@@ -2,7 +2,7 @@
 import { ref, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Menu, X, ArrowUpRight } from 'lucide-vue-next'
-import { navigation } from '../data.js'
+import { navigation, assets } from '../data.js'
 
 const open = ref(false)
 const route = useRoute()
@@ -15,9 +15,9 @@ function closeOnEscape(event) { if (event.key === 'Escape') open.value = false }
 <template>
   <header class="site-header" @keydown="closeOnEscape">
     <div class="header-inner">
-      <RouterLink to="/" class="brand" aria-label="ニューホープ言語学校 ホーム" @click="open = false">
-        <span class="brand-jp">ニューホープ言語学校</span>
-        <span class="brand-en">New Hope language school</span>
+      <RouterLink to="/" class="brand brand-with-logo" aria-label="ニューホープ日本語学校 ホーム" @click="open = false">
+        <img class="brand-symbol" :src="assets.logo" alt="" width="1920" height="1920" /><span class="brand-copy"><span class="brand-jp">ニューホープ日本語学校</span>
+        <span class="brand-en">New Hope language school</span></span>
       </RouterLink>
       <nav class="desktop-nav" aria-label="メインナビゲーション">
         <RouterLink v-for="item in navigation" :key="item.to" :to="item.to">{{ item.label }}</RouterLink>

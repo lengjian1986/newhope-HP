@@ -1,5 +1,10 @@
 export const school = {
-  name: 'ニューホープ言語学校',
+  name: 'ニューホープ日本語学校',
+  company: '株式会社創智百聯',
+  representative: '黄沛議（コウハイギ）',
+  established: '2025年8月27日',
+  receptionHours: '午前9:30～17:30',
+  closedDays: '土日祝',
   englishName: 'New Hope language school',
   address: '大阪府大阪市西成区天神ノ森1丁目12-15',
   phone: '06-7502-6106',
@@ -16,6 +21,7 @@ export const school = {
 const asset = name => `${import.meta.env.BASE_URL}assets/${name}`
 
 export const assets = {
+  logo: asset('logo.png'), logoFull: asset('logo 01.jpg'),
   hero: asset('YoF81.png'), heroMobile: asset('YoF81.png'), art: asset('xKjRp.png'),
   skyline: asset('skyline-clean.png'), classroom: asset('JXO2A.png'),
   teachers: ['RDxAf.png', 'vgCOz.png', 'o3n0jR.png'].map(asset),
@@ -43,7 +49,7 @@ export const courses = [
 ]
 
 export const news = [
-  { slug: 'spring-ceremony', date: '2026.04.08', category: '学校行事', title: '春の入学式を行いました', lead: '新しい仲間を迎えて、新学期が始まりました。\n皆さん、ご入学おめでとうございます。', image: assets.hero, heading: 'ここから始まる、新しい一歩。', body: 'さまざまな国や地域から集まった学生たちが、ニューホープ言語学校での学びをスタートしました。\n\nこれから日本語の学習や学校生活を通して、一緒にたくさんの経験を重ねていきましょう。\n教職員一同、皆さんの新しい挑戦を応援しています。' },
+  { slug: 'spring-ceremony', date: '2026.04.08', category: '学校行事', title: '春の入学式を行いました', lead: '新しい仲間を迎えて、新学期が始まりました。\n皆さん、ご入学おめでとうございます。', image: assets.hero, heading: 'ここから始まる、新しい一歩。', body: 'さまざまな国や地域から集まった学生たちが、ニューホープ日本語学校での学びをスタートしました。\n\nこれから日本語の学習や学校生活を通して、一緒にたくさんの経験を重ねていきましょう。\n教職員一同、皆さんの新しい挑戦を応援しています。' },
   { slug: 'admissions-consultation', date: '2026.03.20', category: '入学情報', title: '新年度の入学相談を受け付けています', lead: 'あなたの新しい一歩について、お話ししませんか。', heading: '入学に関するご相談', body: 'コースや学習内容、出願についてのご相談を受け付けています。\n入学時期や必要書類については、お問い合わせページよりご相談ください。' },
   { slug: 'calligraphy', date: '2026.03.10', category: '学校行事', title: '日本文化体験・書道の授業', lead: '文字を書く楽しさから、日本の文化に触れる。', image: assets.art, heading: '言葉を、かたちに。', body: '書道の授業では、一文字ずつ、思いを込めて書く時間を楽しみました。\n創作を通して、日本語の新しい表現に出会います。' },
   { slug: 'student-art', date: '2026.02.25', category: '学校からのお知らせ', title: '学生の作品をご紹介します', lead: 'アートと日本語の学びから生まれた作品。', image: assets.art, heading: '一人ひとりの表現を、大切に。', body: '学生たちが取り組んだアート活動の作品をご紹介します。\n言葉と創作を通じて、伝える喜びを育てます。' },
