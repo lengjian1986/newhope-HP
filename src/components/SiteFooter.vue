@@ -11,7 +11,7 @@ import { navigation, school, assets } from '../data.js'
         <a class="back-to-top" href="#main" aria-label="ページの先頭へ"><ArrowUp :size="19" /></a>
       </div>
       <address class="footer-address"><span>{{ school.address }}</span><a :href="school.phoneHref">TEL {{ school.phone }}</a><a :href="`mailto:${school.email}`">{{ school.email }}</a></address>
-      <p>運営会社：{{ school.company }}<br />受付時間：{{ school.receptionHours }} ／ 定休日：{{ school.closedDays }}</p>
+      <p>受付時間：{{ school.receptionHours }} ／ 定休日：{{ school.closedDays }}</p>
       <nav aria-label="フッターナビゲーション" class="footer-nav">
         <RouterLink v-for="item in navigation" :key="item.to" :to="item.to">{{ item.label }}</RouterLink>
         <RouterLink to="/about/#teachers">教師紹介</RouterLink><RouterLink to="/about/#access">アクセス</RouterLink>
