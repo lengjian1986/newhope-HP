@@ -39,12 +39,17 @@ export const lifeGallery = [
 ].map(([file, caption, width, height]) => ({ src: asset(file), caption, width, height }))
 
 export const communicationGallery = [
-  ['01', '仲間と一緒に日本語を学ぶ', 1448, 1086, 'activities', 'center'],
-  ['02', '対話を通して、理解を深める', 1448, 1086, 'activities', 'center'],
+  ['01', '仲間と一緒に日本語を学ぶ', 1448, 1086, 'atmosphere', 'center'],
+  ['02', '対話を通して、理解を深める', 1448, 1086, 'atmosphere', 'center'],
   ['03', 'それぞれの課題に向き合う時間', 1073, 1465, 'atmosphere', 'center 72%'],
   ['04', '教室の外で、日本の文化に触れる', 1086, 1448, 'activities', 'center 68%'],
   ['05', '自分のペースで学びを深める', 1679, 937, 'atmosphere', 'center'],
-  ['06', '言葉を交わしながら学ぶ', 1086, 1448, 'activities', 'center 62%'],
+  ['06', '言葉を交わしながら学ぶ', 1086, 1448, 'atmosphere', 'center 62%'],
+  ['07', '仲間と一緒に取り組む時間', 1086, 1448, 'activities', 'center 60%'],
+  ['08', '教室での交流のひとこま', 1448, 1086, 'activities', 'center'],
+  ['09', '食卓を囲んで、親睦を深める', 1448, 1086, 'activities', 'center'],
+  ['10', '日本の風景を仲間と楽しむ', 1086, 1448, 'activities', 'center 70%'],
+  ['11', '大阪の街で、新しい発見', 1086, 1448, 'activities', 'center 65%'],
 ].map(([number, caption, width, height, category, position]) => ({ src: asset(`communication ${number}.png`), caption, width, height, category, position }))
 
 export const navigation = [

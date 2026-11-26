@@ -64,12 +64,11 @@ const quickLinks = [
   </section>
 
   <section id="explore" class="home-explore pale-section"><div class="container"><h2>NEW HOPEで学ぶ、ということ。</h2><div class="explore-grid">
-    <article><h3>教学の雰囲気</h3><p>笑顔で学び合う教室の日々。</p><RouterLink to="/about/#atmosphere" class="text-link">授業の様子を見る <ArrowRight :size="16" /></RouterLink></article>
+    <article><h3>教学の雰囲気</h3><p>笑顔で学び合う教室の日々。</p><RouterLink to="/life/atmosphere/#daily-learning" class="text-link">授業の様子を見る <ArrowRight :size="16" /></RouterLink></article>
     <article><h3>先生たちの紹介</h3><p>あなたの目標に寄り添う先生たち。</p><RouterLink to="/about/#teachers" class="text-link">写真とプロフィールを見る <ArrowRight :size="16" /></RouterLink></article>
     <article><h3>アクセス</h3><p>最寄り駅から学校までの道のり。</p><RouterLink to="/about/#access" class="text-link">写真付きのアクセス案内を見る <ArrowRight :size="16" /></RouterLink></article>
   </div></div></section>
 
-  <section id="home-atmosphere" class="mobile-home-section pale-section"><div class="container"><p class="eyebrow">LEARNING TOGETHER</p><h2>学び合う教室に、<br />笑顔が集まる。</h2><img :src="assets.classroom" alt="笑顔で学び合う教室のイメージ" width="1360" height="800" loading="lazy" /><p>話して、考えて、伝え合う。<br />先生と仲間と一緒に、使える日本語を。</p><RouterLink to="/about/#atmosphere" class="button button-outline">授業の様子を見る <ArrowRight :size="16" /></RouterLink></div></section>
 
   <section id="home-teachers" class="mobile-home-section"><div class="container"><p class="eyebrow">OUR TEACHERS</p><h2>あなたに寄り添う、<br />先生たち。</h2><p>学習も、進路も、毎日の小さな相談も。<br />一人ひとりの挑戦を支えます。</p><div class="teacher-preview"><img v-for="(teacher, i) in teachers" :key="teacher.role" :src="assets.teachers[i]" :alt="`${teacher.role}のイメージ（AI生成）`" loading="lazy" width="786" height="620" /></div><p class="teacher-preview-labels">日本語担当　 /　 進学指導　 /　 文化体験</p><RouterLink to="/about/#teachers" class="button button-outline">先生の写真・プロフィールを見る <ArrowRight :size="16" /></RouterLink><p class="image-note">※ 肖像はAI生成のイメージです。</p></div></section>
 

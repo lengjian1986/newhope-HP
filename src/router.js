@@ -32,7 +32,7 @@ export function createSiteRouter(server = false) {
     ],
     scrollBehavior(to, from, savedPosition) {
       if (savedPosition) return savedPosition
-      if (to.path.startsWith('/life/') && from.path.startsWith('/life/')) return false
+      if (!to.hash && to.path.startsWith('/life/') && from.path.startsWith('/life/')) return false
       if (to.hash) return { el: to.hash, top: 100 }
       return { top: 0 }
     },
