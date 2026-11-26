@@ -13,7 +13,7 @@ function htmlFiles(directory) {
 describe('prerendered production output', () => {
   test('every page contains real content, local images and working internal targets', () => {
     const files = htmlFiles('dist')
-    expect(files.length).toBe(17)
+    expect(files.length).toBe(20)
     for (const file of files) {
       const html = readFileSync(file, 'utf8')
       expect(html, file).toContain('<h1')

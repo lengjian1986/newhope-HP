@@ -20,7 +20,10 @@ export function createSiteRouter(server = false) {
       { path: '/courses/', component: Courses, meta: { title: '学習コース' } },
       { path: '/courses/:slug/', component: CourseDetail, meta: { title: 'コース詳細' } },
       { path: '/admissions/', component: Admissions, meta: { title: '入学案内' } },
-      { path: '/life/', component: Life, meta: { title: '学校生活' } },
+      { path: '/life/', redirect: '/life/art/' },
+      { path: '/life/art/', component: Life, meta: { title: 'アート・文化体験｜学校生活', lifeCategory: 'art' } },
+      { path: '/life/atmosphere/', component: Life, meta: { title: '校内の雰囲気｜学校生活', lifeCategory: 'atmosphere' } },
+      { path: '/life/activities/', component: Life, meta: { title: '交流活動｜学校生活', lifeCategory: 'activities' } },
       { path: '/news/', component: News, meta: { title: 'お知らせ' } },
       { path: '/news/:slug/', component: NewsDetail, meta: { title: 'お知らせ詳細' } },
       { path: '/contact/', component: Contact, meta: { title: 'お問い合わせ' } },
@@ -29,6 +32,7 @@ export function createSiteRouter(server = false) {
     ],
     scrollBehavior(to, from, savedPosition) {
       if (savedPosition) return savedPosition
+      if (to.path.startsWith('/life/') && from.path.startsWith('/life/')) return false
       if (to.hash) return { el: to.hash, top: 100 }
       return { top: 0 }
     },

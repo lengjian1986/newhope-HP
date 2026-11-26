@@ -28,11 +28,34 @@ export const assets = {
   route: ['t8SrF.png', 'MzKnx.png', 'b8ouMO.png'].map(asset),
 }
 
+export const lifeGallery = [
+  ['classroom 01.jpg', '本に囲まれた学習スペース', 1381, 1080],
+  ['classroom 02.jpg', '明るく開放的な教室', 2176, 969],
+  ['classroom 03.jpg', '学びと交流が生まれる教室', 1789, 1080],
+  ['classroom 04.png', '自然光が差し込む教室', 1132, 1389],
+  ['front 01.jpg', '受付・ラウンジ', 1980, 1080],
+  ['entrans 01.png', '校舎の外観', 1448, 1086],
+  ['entrans 02.png', '学校のエントランス', 1448, 1086],
+].map(([file, caption, width, height]) => ({ src: asset(file), caption, width, height }))
+
+export const communicationGallery = [
+  ['01', '仲間と一緒に日本語を学ぶ', 1448, 1086, 'activities', 'center'],
+  ['02', '対話を通して、理解を深める', 1448, 1086, 'activities', 'center'],
+  ['03', 'それぞれの課題に向き合う時間', 1073, 1465, 'atmosphere', 'center 72%'],
+  ['04', '教室の外で、日本の文化に触れる', 1086, 1448, 'activities', 'center 68%'],
+  ['05', '自分のペースで学びを深める', 1679, 937, 'atmosphere', 'center'],
+  ['06', '言葉を交わしながら学ぶ', 1086, 1448, 'activities', 'center 62%'],
+].map(([number, caption, width, height, category, position]) => ({ src: asset(`communication ${number}.png`), caption, width, height, category, position }))
+
 export const navigation = [
   { to: '/about/', label: '学校案内' },
   { to: '/courses/', label: '学習コース' },
   { to: '/admissions/', label: '入学案内' },
-  { to: '/life/', label: '学校生活' },
+  { to: '/life/', label: '学校生活', children: [
+    { to: '/life/art/', label: 'アート・文化体験' },
+    { to: '/life/atmosphere/', label: '校内の雰囲気' },
+    { to: '/life/activities/', label: '交流活動' },
+  ] },
   { to: '/news/', label: 'お知らせ' },
 ]
 

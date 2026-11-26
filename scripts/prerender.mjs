@@ -4,7 +4,7 @@ import { render } from '../.ssr/entry-server.js'
 
 const root = resolve('dist')
 const template = await readFile(join(root, 'index.html'), 'utf8')
-const routes = ['/', '/about/', '/courses/', '/courses/academic/', '/courses/general/', '/courses/culture/', '/admissions/', '/life/', '/news/', '/news/spring-ceremony/', '/news/admissions-consultation/', '/news/calligraphy/', '/news/student-art/', '/news/school-visit/', '/contact/', '/privacy/', '/404/']
+const routes = ['/', '/about/', '/courses/', '/courses/academic/', '/courses/general/', '/courses/culture/', '/admissions/', '/life/', '/life/art/', '/life/atmosphere/', '/life/activities/', '/news/', '/news/spring-ceremony/', '/news/admissions-consultation/', '/news/calligraphy/', '/news/student-art/', '/news/school-visit/', '/contact/', '/privacy/', '/404/']
 for (const route of routes) {
   const { html, title } = await render(route)
   const content = template.replace('<!--app-html-->', html).replace(/<title>.*?<\/title>/, `<title>${title}｜ニューホープ日本語学校</title>`)
